@@ -1,0 +1,31 @@
+#data load step. this uses eda_mapping_sample.xlsx, which already has lat/long columns imported using Google Maps API.
+library(readxl)
+fy2020_EDA_grant_capture_wlatlong <- read_excel("C:/Users/raven/OneDrive - U.S. Department of Commerce/Desktop/EDA Mapping Sample/fy2020_EDA_grant_capture_wlatlong.xlsx")
+
+#adding the libraries we need.
+library(dplyr)
+library(ggplot2)
+library(rjson)
+library(jsonlite)
+library(leaflet)
+library(RCurl)
+
+#building the map. cluserOptions gives you the ability to add those useful cluster marks on the map.
+map <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(
+    clusterOptions = markerClusterOptions(), 
+    lng=fy2020_EDA_grant_capture_wlatlong$Longitude, 
+    lat=fy2020_EDA_grant_capture_wlatlong$Latitude, 
+    popup=paste(
+      "<b>Name:</b>", fy2020_EDA_grant_capture_wlatlong$Full_Applicant_Name, 
+      "<br>",
+      "<b>Award Date:</b>", fy2020_EDA_grant_capture_wlatlong$Award_Date,
+      "<br>",
+      "<b>Award Amount (in USD):</b>",fy2020_EDA_grant_capture_wlatlong$EDA_Funding,
+      "<br>",
+      "<b>Description:</b>", fy2020_EDA_grant_capture_wlatlong$Project_Description),
+                          
+    )  
+
+map
